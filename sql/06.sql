@@ -4,8 +4,8 @@
  * Use the count() aggregation function and group by the actor's last name.
  */
 
-SELECT last_name, COUNT(*) AS actor_count
+SELECT last_name, COUNT(*) AS last_name_count
 FROM actor
 GROUP BY last_name
-ORDER BY actor_count DESC, last_name ASC;
+ORDER BY last_name_count DESC;
 
