@@ -9,31 +9,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: docker
+    
+    - name: Initialize Submodules
       run: |
-        # load the pagila data
         git submodule init
         git submodule update
-
-        # run the database in docker container
+    
+    - name: Start Database in Docker
+      run: |
         docker-compose up -d --build
+    
+    - name: Wait for Database to be Ready
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        for i in {1..30}; do
+          if docker-compose exec -T pg pg_isready -U myuser; then
+            echo "Database is ready!"
+            break
+          fi
+          echo "Waiting for database... ($i/30)"
+          sleep 2
+        done
 
-        # verify that it is running successfully
-        # this is an idempotent command useful for debugging
-        docker ps -a
+    - name: Run Tests
+      run: |
+        docker-compose exec -T pg ./run_tests.sh
 
-        # after the database starts successfully,
-        # it needs time to load the pagila data;
-        # this should happen in <1 second,
-        # but we sleep for a long time just to be sure that everything is loaded;
-        # this is a bit hacky,
-        # and a proper check would be to have an infinite loop that terminates once the data has been loaded
-        sleep 20
-
-        # run the tests
-        docker-compose exec -T pg ./fixme.sh
-
-        # FIXME:
-        # the docker-compose command above will generate an error when the github action is run
-        # this is due to the `fixme.sh` file not existing
-        # you will have to modify this file so that github actions runs the correct test cases
