@@ -6,4 +6,4 @@
 
 SELECT first_name, last_name, address AS "street_address"
 FROM staff
-JOIN adress USING (address_id);
+JOIN address USING (address_id);
