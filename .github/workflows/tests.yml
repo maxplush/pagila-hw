@@ -17,13 +17,13 @@ jobs:
     
     - name: Start Database in Docker
       run: |
-        docker-compose up -d --build
+        docker compose up -d --build
     
     - name: Wait for Database to be Ready
       run: |
         echo "Waiting for PostgreSQL to be ready..."
         for i in {1..30}; do
-          if docker-compose exec -T pg pg_isready -U myuser; then
+          if docker compose exec -T pg pg_isready -U myuser; then
             echo "Database is ready!"
             break
           fi
@@ -33,5 +33,5 @@ jobs:
 
     - name: Run Tests
       run: |
-        docker-compose exec -T pg ./run_tests.sh
+        docker compose exec -T pg ./run_tests.sh
 
