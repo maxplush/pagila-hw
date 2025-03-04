@@ -2,9 +2,18 @@
  * Use a JOIN to count the number films in each category in the specified language.
  * Use table category, film_category, film, and language.
  */
-CREATE OR REPLACE FUNCTION category_counts_by_language(TEXT) RETURNS TABLE(name TEXT, count BIGINT) AS
+
+CREATE OR REPLACE FUNCTION category_counts_by_language(language_name TEXT)
+RETURNS TABLE(name TEXT, count BIGINT) AS
 $$
--- FIXME: implementation goes here
+SELECT c.name, COUNT(f.film_id) AS count
+FROM category c
+JOIN film_category fc ON c.category_id = fc.category_id
+JOIN film f ON fc.film_id = f.film_id
+JOIN language l ON f.language_id = l.language_id
+WHERE l.name = language_name
+GROUP BY c.name
+ORDER BY c.name;
 $$
 LANGUAGE SQL
 IMMUTABLE
